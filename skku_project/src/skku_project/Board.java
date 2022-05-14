@@ -26,10 +26,6 @@ public class Board extends Thread{
 	Player player = new Player( 320 ,750 );
 	Missile missile;
 
-	Enemy Enemy;
-	BossEnemy boss;
-	Item item;
-
 	private int stage=0; // easy 0 : normal 1 : hard 2
 	///// 난이도 변수
 	private int enemyAppear = 70; // easy 80 : normal 60 : hard 40
@@ -43,12 +39,15 @@ public class Board extends Thread{
 	private int missileDmg = 6;
 	private int enemyDropSpeed = 10;  // easy 10 : normal 12 : hard 15
 	private int EnemyDropSpeedOrigin;
+	private int bossAppear = 1000000; //easy 1000000 : normal 2000000 : hard 3000000
+	private int bossEnemyHp = 100;  //easy 100 : normal 200 : hard 300
+	private int bossDropSpeed = 1;  //easy 1 : normal 2 : hard 3
 	/////
 	private int cnt; // delay 간극조절
 
 	private long pretime;
 	private int missileDelay = 15;
-	private int score;
+	private int score = 2999999;
 	private boolean up,down,left,right,shooting;
 	private boolean isOver=false;
 
@@ -57,7 +56,9 @@ public class Board extends Thread{
 
 	private ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 	private Enemy enemy;
-
+	
+	private ArrayList<BossEnemy> bossEnemyList = new ArrayList<BossEnemy>();
+	private BossEnemy boss;
 	
 	private ArrayList<Item> itemList = new ArrayList<Item>();
 	private Item itemElements;
@@ -95,7 +96,7 @@ public class Board extends Thread{
 						switch(stage) {
 						case 2: enemyAppearProcess();
 						case 1: enemyAppearProcess();
-						case 0: ;
+						case 0: enemyAppearProcess();
 						default: enemyAppearProcess();
 						break;
 						}
@@ -105,7 +106,8 @@ public class Board extends Thread{
 						itemMoveProcess();
 						itemEffects();
 						itemRemove();
-						
+						bossAppearProcess();
+						bossMoveProcess();
 						if(playerHitted == false)
 						{
 							playerHitted();
@@ -134,14 +136,17 @@ public class Board extends Thread{
 			this.delay = 36;
 			this.enemyAppear = 80;
 			this.mujeockTime = 2000;  // easy 2000 : normal 1500 : hard 1000
-			this.enemyHp = 5; // easy 5 : normal 10 : hard 20
+			this.enemyHp = 6; // easy 5 : normal 10 : hard 20
 			this.scorediv = 150; // easy 150 : normal 100 : hard 70
 			this.scoreAdd = 500; // easy 500 : normal 1000 : hard 2000
-			this.itemAppear = 2000; // easy 2000 : normal 3000 : hard 4000
+			this.itemAppear = 300; // easy 2000 : normal 3000 : hard 4000
 			this.playeSpeed = 10; // easy 10 : normal 12 : hard 15
 			this.missileDmg = 6;// easy 6 : normal 5 : hard 4
 			this.enemyDropSpeed = 10;  // easy 10 : normal 12 : hard 15
 			EnemyDropSpeedOrigin = enemyDropSpeed;
+			this.bossAppear = 1000000; //easy 1000000 : normal 2000000 : hard 3000000
+			this.bossEnemyHp = 100;  //easy 100 : normal 200 : hard 300
+			this.bossDropSpeed = 1;  //easy 3 : normal 4 : hard 5
 		}
 		else if(this.stage ==1)
 		{
@@ -151,25 +156,31 @@ public class Board extends Thread{
 			this.enemyHp = 10;
 			this.scorediv = 100;
 			this.scoreAdd = 1000;
-			this.itemAppear = 3000;
+			this.itemAppear = 200;
 			this.playeSpeed = 12;
-			this.missileDmg = 5;
+			this.missileDmg = 7;
 			this.enemyDropSpeed = 12;
 			EnemyDropSpeedOrigin = enemyDropSpeed;
+			this.bossAppear = 2000000;
+			this.bossEnemyHp = 200;
+			this.bossDropSpeed = 2;
 		}
 		else if(this.stage ==2 )
 		{
 			this.delay= 16;
 			this.enemyAppear = 40;
 			this.mujeockTime = 1000;
-			this.enemyHp = 20;
+			this.enemyHp = 25;
 			this.scorediv = 70;
 			this.scoreAdd = 2000;
-			this.itemAppear = 100;
+			this.itemAppear = 50;
 			this.playeSpeed = 15; 
-			this.missileDmg = 4;
+			this.missileDmg = 8;
 			this.enemyDropSpeed = 15;
 			EnemyDropSpeedOrigin = enemyDropSpeed;
+			this.bossAppear = 3000000;
+			this.bossEnemyHp = 300;
+			this.bossDropSpeed = 2;
 		}
 	}
 	private void keyProcess() {
@@ -188,11 +199,28 @@ public class Board extends Thread{
 			enemy = enemyList.get(j);
 
 			if ( ( player.getX() > enemy.getX() || player.getX() + player.getWidth() > enemy.getX())
-					&& (player.getX() < enemy.getX() + enemy.getWidth() ||  player.getX() + player.getWidth() < enemy.getX() + + enemy.getWidth()   )
+					&& (player.getX() < enemy.getX() + enemy.getWidth() ||  player.getX() + player.getWidth() < enemy.getX() +  enemy.getWidth()   )
 					&& player.getY() + enemy.getHeight() > enemy.getY() && player.getY() < enemy.getY()  ) {
 				player.setHp(player.getHp()-1);
 				playerHitted = true;
 				hittedSound.start();
+				enemyList.remove(enemy);
+				if(player.getHp()<=0)
+					isOver= true;
+				return true;
+			}
+
+		}
+		for (int j = 0; j < bossEnemyList.size(); j++) {
+			boss = bossEnemyList.get(j);
+
+			if ( ( player.getX() > boss.getX() || player.getX() + player.getWidth() > boss.getX())
+					&& (player.getX() < boss.getX() + boss.getWidth() ||  player.getX() + player.getWidth() < boss.getX() +  boss.getWidth()   )
+					&& player.getY() + boss.getHeight() > boss.getY() && player.getY() < boss.getY()  ) {
+				player.setHp(player.getHp()-2);
+				playerHitted = true;
+				hittedSound.start();
+				enemyList.remove(enemy);
 				if(player.getHp()<=0)
 					isOver= true;
 				return true;
@@ -235,6 +263,22 @@ public class Board extends Thread{
 					itemEvent();
 				}
 			}
+			for (int j = 0; j < bossEnemyList.size(); j++) {
+				boss = bossEnemyList.get(j);
+				if ( (playerAttack.getX() > boss.getX()  || playerAttack.getX() + playerAttack.getWidth() > boss.getX() )
+						&& ( playerAttack.getX() < boss.getX() + boss.getWidth() || playerAttack.getX() + playerAttack.getWidth()< boss.getX() + boss.getWidth() )
+						&& playerAttack.getY() + boss.getHeight() > boss.getY() && playerAttack.getY() < boss.getY()  ) {
+					boss.setHp( boss.getHp() - playerAttack.getDmg());
+					playerAttackList.remove(playerAttack);
+				}
+				if (boss.getHp() <= 0) {
+					attackSound.start();
+					bossEnemyList.remove(boss);
+					score += scoreAdd*20;
+					this.missileDmg++;
+					this.player.setHp(this.player.getHp()+1);
+				}
+			}
 		}
 
 	}
@@ -250,6 +294,19 @@ public class Board extends Thread{
 		for (int i = 0; i< enemyList.size(); i++) {
 			enemy = enemyList.get(i);
 			enemy.move();
+		}
+	}
+	private void bossAppearProcess() {
+		if ( this.cnt%1000 == 0) {
+			boss = new BossEnemy( (int)(Math.random()*200 - 49), -400, bossEnemyHp,bossDropSpeed);
+			bossEnemyList.add(boss);
+		}
+	}
+
+	private void bossMoveProcess() {
+		for (int i = 0; i< bossEnemyList.size(); i++) {
+			boss = bossEnemyList.get(i);
+			boss.move();
 		}
 	}
 	private void itemAppearProcess() {
@@ -352,6 +409,7 @@ public class Board extends Thread{
 		enemyDraw(g);
 		infoDraw(g);
 		itemDraw(g);
+		bossDraw(g);
 	}
 	public void playerDraw(Graphics g) {
 		int tempHeart=player.getHp();
@@ -380,11 +438,33 @@ public class Board extends Thread{
 			if( enemy.getHp() *10 > 100)
 			{
 				g.setColor(Color.red);
-				g.fillRect(enemy.getX() + 1, enemy.getY() -10, (enemy.getHp()-10) *10 , 15);
+				g.fillRect(enemy.getX() + 1, enemy.getY() -10, (int)((enemy.getHp()-10) *7.5) , 15);
 			}
 			else
 			{
-				g.fillRect(enemy.getX() + 1, enemy.getY() -10, (enemy.getHp()) *10, 15);
+				g.fillRect(enemy.getX() + 1, enemy.getY() -10,  (int)( (enemy.getHp()) *7.5), 15);
+			}
+
+		}
+	}
+	public void bossDraw(Graphics g) {
+		for (int i = 0; i< bossEnemyList.size(); i++) {
+			boss = bossEnemyList.get(i);
+			g.drawImage(boss.img, boss.getX(), boss.getY(), null);
+			g.setColor(Color.GREEN);
+			if( boss.getHp()  > 200)
+			{
+				g.setColor(Color.blue);
+				g.fillRect(boss.getX() + 1, boss.getY() -10, (boss.getHp()-200)*4 , 15);
+			}
+			else if( boss.getHp()  > 100)
+			{
+				g.setColor(Color.red);
+				g.fillRect(boss.getX() + 1, boss.getY() -10, (boss.getHp()-100)*4 , 15);
+			}
+			else
+			{
+				g.fillRect(boss.getX() + 1, boss.getY() -10, ((boss.getHp()) )*4, 15);
 			}
 
 		}
