@@ -267,7 +267,8 @@ public class Board extends Thread{
 				boss = bossEnemyList.get(j);
 				if ( (playerAttack.getX() > boss.getX()  || playerAttack.getX() + playerAttack.getWidth() > boss.getX() )
 						&& ( playerAttack.getX() < boss.getX() + boss.getWidth() || playerAttack.getX() + playerAttack.getWidth()< boss.getX() + boss.getWidth() )
-						&& playerAttack.getY() + boss.getHeight() > boss.getY() && playerAttack.getY() < boss.getY()  ) {
+						&& ( playerAttack.getY() + boss.getHeight() > boss.getY()) 
+						&& ( (playerAttack.getY() < boss.getY()) ||(playerAttack.getY() < boss.getY()+boss.getHeight())   ) )   {
 					boss.setHp( boss.getHp() - playerAttack.getDmg());
 					playerAttackList.remove(playerAttack);
 				}
@@ -335,7 +336,7 @@ public class Board extends Thread{
 					player.setDmg(20);
 					break;
 				case "Delay":
-					this.missileDelay=8;
+					this.missileDelay=6;
 					break;
 				case "DropRate":
 					this.enemyDropSpeed=6;
@@ -480,7 +481,7 @@ public class Board extends Thread{
 			g.drawString("Speed", 30, 185);
 		if( itemEffect.containsKey("Damage"))
 			g.drawString("Damage Up", 30, 210);
-		if( itemEffect.containsKey("Delay¤¸"))
+		if( itemEffect.containsKey("Delay"))
 			g.drawString("No delay", 30, 235);
 		if( itemEffect.containsKey("DropRate"))
 			g.drawString("Slow Drop", 30, 260);
