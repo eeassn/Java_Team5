@@ -91,8 +91,14 @@ public class Board extends Thread{
 						Thread.sleep(delay - System.currentTimeMillis() + pretime);
 						keyProcess();
 						playerAttackProcess();
-
-						enemyAppearProcess();
+						
+						switch(stage) {
+						case 2: enemyAppearProcess();
+						case 1: enemyAppearProcess();
+						case 0: ;
+						default: enemyAppearProcess();
+						break;
+						}
 						enemyMoveProcess();
 						
 						itemAppearProcess();
@@ -277,6 +283,9 @@ public class Board extends Thread{
 				case "DropRate":
 					this.enemyDropSpeed=6;
 					break;
+				case "invincible":
+					this.playerHitted =true;
+					break;
 				}
 		}
 	}
@@ -300,6 +309,9 @@ public class Board extends Thread{
 					case "DropRate":
 						this.enemyDropSpeed=EnemyDropSpeedOrigin;
 						break;
+					case "invincible":
+						this.playerHitted =false;
+						break;
 				}
 				itemEffect.remove(itemName);
 			}
@@ -314,7 +326,7 @@ public class Board extends Thread{
 				this.player.setHp(player.getHp()+1);
 			break;
 		case 1:
-			System.out.println("spped");
+			System.out.println("speed");
 			itemEffect.put("Speed", System.currentTimeMillis());
 			break;
 		case 2:
@@ -323,7 +335,7 @@ public class Board extends Thread{
 			break;
 		case 3:			
 			System.out.println(" 公利");
-			playerLifeCooltime=  System.currentTimeMillis(); // 公利
+			itemEffect.put("invincible", System.currentTimeMillis());
 			break;
 		case 4:
 			System.out.println("畴掉");
@@ -346,7 +358,7 @@ public class Board extends Thread{
 		if(tempHeart>0 && tempHeart < 10)
 		{
 			for(int q=0;q<tempHeart;q++)
-				g.drawImage(heart, 10 + q*60, 50, null);
+				g.drawImage(heart, 10 + q*60, 110, null);
 		}
 		else if(tempHeart <= 0)
 		{
@@ -378,10 +390,22 @@ public class Board extends Thread{
 		}
 	}
 	public void itemDraw(Graphics g) {
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 20));
 		for (int i = 0; i< itemList.size(); i++) {
 			itemElements = itemList.get(i);
 			g.drawImage(itemElements.img, itemElements.getX(), itemElements.getY(), null);
 		}
+		if(  itemEffect.containsKey("Speed") )
+			g.drawString("Speed", 30, 185);
+		if( itemEffect.containsKey("Damage"))
+			g.drawString("Damage Up", 30, 210);
+		if( itemEffect.containsKey("Delayじ"))
+			g.drawString("No delay", 30, 235);
+		if( itemEffect.containsKey("DropRate"))
+			g.drawString("Slow Drop", 30, 260);
+		if( itemEffect.containsKey("invincible"))
+			g.drawString("Invincible", 30, 285);
 	}
 	public void infoDraw(Graphics g) {
 		g.setColor(Color.WHITE);

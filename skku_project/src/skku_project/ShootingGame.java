@@ -108,16 +108,16 @@ public class ShootingGame extends JFrame{
 		public void keyPressed(KeyEvent e) {
 			// TODO Auto-generated method stub
 			switch(e.getKeyCode()) {
-			case KeyEvent.VK_W:
+			case KeyEvent.VK_UP:
 				game.setUp(true);
 				break;
-			case KeyEvent.VK_S:
+			case KeyEvent.VK_DOWN:
 				game.setDown(true);
 				break;
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_LEFT:
 				game.setLeft(true);
 				break;
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_RIGHT:
 				game.setRight(true);
 				break;
 			case KeyEvent.VK_1:
@@ -196,16 +196,16 @@ public class ShootingGame extends JFrame{
 		@Override
 		public void keyReleased(KeyEvent e) {
 			switch (e.getKeyCode()) {
-			case KeyEvent.VK_W:
+			case KeyEvent.VK_UP:
 				game.setUp(false);
 				break;
-			case KeyEvent.VK_S:
+			case KeyEvent.VK_DOWN:
 				game.setDown(false);
 				break;
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_LEFT:
 				game.setLeft(false);
 				break;
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_RIGHT:
 				game.setRight(false);
 				break;
 			case KeyEvent.VK_SPACE:
