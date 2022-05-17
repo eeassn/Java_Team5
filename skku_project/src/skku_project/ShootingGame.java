@@ -246,7 +246,6 @@ public class ShootingGame extends JFrame{
 	class RankFrame extends JDialog{
 		JLabel jlb = new JLabel("");
 		public RankFrame(){
-			getContentPane().add(jlb);
 			jlb.setText("rank".toString());
 			this.setSize(200,100);
 			this.setModal(true);
@@ -327,7 +326,7 @@ public class ShootingGame extends JFrame{
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		} finally {	
 			try {
 				if (bw != null) {
 					bw.flush(); // 남아있는 데이터까지 보내 준다

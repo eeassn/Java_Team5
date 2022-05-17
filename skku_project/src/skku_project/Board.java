@@ -47,7 +47,7 @@ public class Board extends Thread{
 
 	private long pretime;
 	private int missileDelay = 15;
-	private int score = 2999999;
+	private int score = 0;
 	private boolean up,down,left,right,shooting;
 	private boolean isOver=false;
 
