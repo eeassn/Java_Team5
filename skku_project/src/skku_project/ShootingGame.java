@@ -468,7 +468,6 @@ public class ShootingGame extends JFrame{
 	public class FlickeringLabelEx extends JFrame {
 		public FlickeringLabelEx( ) {
 			setTitle("FlickeringLabelEx 예제");
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setLayout(new FlowLayout( ));
 
 			FlickeringLabel fLabel = new FlickeringLabel("리버풀", 500);

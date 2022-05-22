@@ -5,7 +5,7 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 public class Enemy extends GameObject{
-	Image img = new ImageIcon("src/image/enemy.png").getImage();
+	Image img = new ImageIcon("src/image/enemy.jpg").getImage();
 
     public Enemy(int x, int y,int hp,int speed) {
     	this.setX(x);
