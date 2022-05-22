@@ -32,7 +32,8 @@ public class ShootingGame extends JFrame{
 
 	HashMap<String, ArrayList<String>> rank = new HashMap<String, ArrayList<String>>();
 	ArrayList<String> list = new ArrayList<String>();
-
+	String[] strArr = new String[100];
+	public int tableSize =0;
 	private Image bufferImage;
 	private Graphics screenGraphic;
 	private Audio backgroundMusic;
@@ -182,9 +183,30 @@ public class ShootingGame extends JFrame{
 				if(isMainScreen)
 				{
 					csvRead();
-					rankTablePrint();
+					historyTablePrint(strArr);
+					HistoryFrame hf = new HistoryFrame();
 				}
-					
+
+				break;
+			}
+			case KeyEvent.VK_R:
+			{
+				if(isMainScreen)
+				{
+					csvRead();
+					rankTablePrint(strArr);
+					RankFrame rf = new RankFrame();
+				}
+
+				break;
+			}
+			case KeyEvent.VK_O:
+			{
+				if(isMainScreen)
+				{
+					FlickeringLabelEx ex = new FlickeringLabelEx();
+				}
+
 				break;
 			}
 			case KeyEvent.VK_SPACE:
@@ -243,71 +265,141 @@ public class ShootingGame extends JFrame{
 		JOptionPane.showMessageDialog(null,"Enter를 누르시면 종료됩니다.");
 		System.exit(0);
 	}
-	class RankFrame extends JDialog{
-		JLabel jlb = new JLabel("");
+	class RankFrame extends JFrame{
+		JList list;
+		String[] strArr = new String[100];
+
+		@SuppressWarnings("unchecked")
 		public RankFrame(){
-			jlb.setText("rank".toString());
-			this.setSize(200,100);
-			this.setModal(true);
+			this.setTitle("Rank");
+			this.setSize(400,700);
+			//this.setModal(true);
 			this.setVisible(true);
 
+			this.setLayout(new BorderLayout());
 
+
+			setLocationRelativeTo(null);
+
+			rankTablePrint(strArr);
+			list  = new JList(strArr);
+
+			this.add(list, BorderLayout.CENTER);
 			// file io 구현
 		}
 	}
-	class HistoryFrame extends JDialog{
-		JLabel jlb = new JLabel("");
+	class HistoryFrame extends JFrame{
+		JList list  = new JList(strArr);
+		
+		
+		@SuppressWarnings("unchecked")
 		public HistoryFrame(){
-			getContentPane().add(jlb);
-			jlb.setText("history".toString());
-			this.setSize(200,100);
-			this.setModal(true);
+
+			
+			this.setTitle("History");
+			this.setSize(400,700);
+			//this.setModal(true);
 			this.setVisible(true);
 
+			this.setLayout(new BorderLayout());
+			setLocationRelativeTo(null);
 
-			// file io 구현
+			
+
+			this.add(list, BorderLayout.CENTER);
+			// file io 구현	
 		}
 	}
-	
-	public void rankTablePrint() {
+	public void historyTablePrint(String[] p) {
+		for(int i=0;i<100;i++)
+		{
+			strArr[i] = null;
+		}
+		int max = tableSize;
+		int index = 30;
+		String tempStr="";
 		for (Entry<String, ArrayList<String>> entry : rank.entrySet()) {
+			tempStr="";
 			String name = entry.getKey();
-			
-			System.out.print(name + " : ");
-			System.out.print(entry.getValue().get(0) + " ");
-			System.out.println(entry.getValue().get(1));
+			tempStr += name;
+			for(int i=0;i<7-name.length();i++)
+				tempStr += " ";
+			tempStr += "//  Point : ";
+			for(int i=0;i<10-entry.getValue().get(0).length();i++)
+				tempStr += " ";
+			tempStr += entry.getValue().get(0);
+			tempStr += "   //  Date :  ";
+			tempStr += entry.getValue().get(1);
+
+			//System.out.println(tempStr);
+			p[index--] = tempStr;
+			//System.out.print(max);
+			//System.out.println(lowerIndex);
+			if(tableSize-max >= 30)
+				return;
+		}
+	}
+	public void rankTablePrint(String[] p) {
+		for(int i=0;i<100;i++)
+		{
+			strArr[i] = null;
+		}
+		int max = tableSize;
+		int index = 10;
+		String tempStr="";
+		for (Entry<String, ArrayList<String>> entry : rank.entrySet()) {
+			tempStr="";
+			String name = entry.getKey();
+			tempStr += name;
+			for(int i=0;i<7-name.length();i++)
+				tempStr += " ";
+			tempStr += "//  Point : ";
+			for(int i=0;i<10-entry.getValue().get(0).length();i++)
+				tempStr += " ";
+			tempStr += entry.getValue().get(0);
+			tempStr += "   //  Date :  ";
+			tempStr += entry.getValue().get(1);
+
+			//System.out.println(tempStr);
+			p[index--] = tempStr;
+			max--;
+			//System.out.print(max);
+			//System.out.println(lowerIndex);
+			if(tableSize-max >= 10)
+				return;
 		}
 	}
 	public void csvRead()
 	{
 		File csv = new File("src/result.csv");
-        BufferedReader br = null;
-        String line = "";
+		BufferedReader br = null;
+		String line = "";
 
-        try {
-            br = new BufferedReader(new FileReader(csv));
-            while ((line = br.readLine()) != null) { // readLine()은 파일에서 개행된 한 줄의 데이터를 읽어온다.
-                String[] lineArr = line.split(","); // 파일의 한 줄을 ,로 나누어 배열에 저장 후 리스트로 변환한다.
-                ArrayList<String> temp = new ArrayList<String>();
-                temp.add(lineArr[1]);
-                temp.add(lineArr[2]);
-                //System.out.println( lineArr[1] + " " +lineArr[2] );
-                rank.put(lineArr[0],temp);
-                //temp.clear();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (br != null) { 
-                    br.close(); // 사용 후 BufferedReader를 닫아준다.
-                }
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
+		try {
+			br = new BufferedReader(new FileReader(csv));
+			while ((line = br.readLine()) != null) { // readLine()은 파일에서 개행된 한 줄의 데이터를 읽어온다.
+				String[] lineArr = line.split(","); // 파일의 한 줄을 ,로 나누어 배열에 저장 후 리스트로 변환한다.
+				ArrayList<String> temp = new ArrayList<String>();
+				temp.add(lineArr[1]);
+				temp.add(lineArr[2]);
+				//System.out.println( lineArr[1] + " " +lineArr[2] );
+				rank.put(lineArr[0],temp);
+				//temp.clear();
+				tableSize++;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null) { 
+					br.close(); // 사용 후 BufferedReader를 닫아준다.
+				}
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void csvWrite(String name, String score, String date) {
@@ -316,7 +408,7 @@ public class ShootingGame extends JFrame{
 		try {
 			bw = new BufferedWriter(new FileWriter(csv, true));
 			// csv파일의 기존 값에 이어쓰려면 위처럼 true를 지정하고, 기존 값을 덮어쓰려면 true를 삭제한다
-			
+
 			String aData = name + "," + score + "," + date ;
 			// 한 줄에 넣을 각 데이터 사이에 ,를 넣는다
 			bw.write(aData);
@@ -336,6 +428,59 @@ public class ShootingGame extends JFrame{
 				e.printStackTrace();
 			}
 		}
+
+
 	}
 
+
+	class FlickeringLabel extends JLabel implements Runnable {
+		private long delay;
+
+		public FlickeringLabel(String text, long delay) {
+			super(text);
+			this.delay = delay;
+			setOpaque(true);
+			Thread th = new Thread(this);
+			th.start();
+		}
+
+		@Override
+		public void run() {
+			int n = 0;
+			while (true) {
+				if (n == 0)
+					setBackground(Color.YELLOW);
+				else
+					setBackground(Color.GREEN);
+				if (n == 0)
+					n = 1;
+				else
+					n = 0;
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException e) {
+					return;
+				}
+			}
+		}
+	}
+
+	public class FlickeringLabelEx extends JFrame {
+		public FlickeringLabelEx( ) {
+			setTitle("FlickeringLabelEx 예제");
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setLayout(new FlowLayout( ));
+
+			FlickeringLabel fLabel = new FlickeringLabel("리버풀", 500);
+			JLabel label = new JLabel("리그우승");
+			FlickeringLabel fLabel2 = new FlickeringLabel("챔스우승", 300);
+
+			add(fLabel);
+			add(label);
+			add(fLabel2);
+
+			setSize(300, 150);
+			setVisible(true);
+		}
+	}
 }
