@@ -52,4 +52,5 @@ we would develop more functions, such as Socket Networking.. Rank Sorting... mor
 
 ## Author
 
-100%(every part) produced by 한종승 - c14ss@g.skku.edu
+produced by 한종승 - c14ss@g.skku.edu
+ref : Youtube 나동빈, 동현, Github 안드로이드 슈팅게임 모작
