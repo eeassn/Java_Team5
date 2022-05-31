@@ -52,4 +52,4 @@ we would develop more functions, such as Socket Networking.. Rank Sorting... mor
 
 ## Author
 
-1. 한종승 - c14ss@g.skku.edu
+100%(every part) produced by 한종승 - c14ss@g.skku.edu
