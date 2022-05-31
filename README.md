@@ -4,7 +4,7 @@
 ### team 5
 
 # Shooting Game
-![img](https://github.com/changchang4825/OSS19/blob/main/img/prom.gif?raw=true)
+![img](https://github.com/eeassn/Skku_Java_Team5/blob/main/skku_project/src/image/winaldum.jpg?raw=true)
 
 # BackGround
 
